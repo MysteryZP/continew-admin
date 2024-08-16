@@ -262,6 +262,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDO, UserRes
     }
 
     @Override
+    @Cached(key = "#id", name = CacheConstants.USER_KEY_PREFIX, cacheType = CacheType.BOTH, syncLocal = true)
+    public String getUsernameById(Long id) {
+        return baseMapper.selectUsernameById(id);
+    }
+
+    @Override
     protected <E> List<E> list(UserQuery query, SortQuery sortQuery, Class<E> targetClass) {
         QueryWrapper<UserDO> queryWrapper = this.buildQueryWrapper(query);
         // 设置排序

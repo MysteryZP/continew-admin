@@ -93,6 +93,9 @@ public interface UserMapper extends DataPermissionMapper<UserDO> {
     @Select("SELECT nickname FROM sys_user WHERE id = #{id}")
     String selectNicknameById(@Param("id") Long id);
 
+    @Select("SELECT username FROM sys_user WHERE id = #{id}")
+    String selectUsernameById(@Param("id") Long id);
+
     /**
      * 根据邮箱查询数量
      *

@@ -16,6 +16,8 @@
 
 package top.continew.admin.system.service;
 
+import cn.crane4j.annotation.ContainerMethod;
+import cn.crane4j.annotation.MappingType;
 import org.springframework.web.multipart.MultipartFile;
 import top.continew.admin.system.model.entity.UserDO;
 import top.continew.admin.system.model.query.UserQuery;
@@ -138,4 +140,10 @@ public interface UserService extends BaseService<UserResp, UserDetailResp, UserQ
      * @return 用户数量
      */
     Long countByDeptIds(List<Long> deptIds);
+
+    @ContainerMethod(
+            namespace = "Username",
+            type = MappingType.ORDER_OF_KEYS
+    )
+    String getUsernameById(Long var1);
 }

@@ -33,6 +33,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import top.continew.admin.common.constant.CacheConstants;
+import top.continew.admin.merchantManage.model.query.MerchantQuery;
+import top.continew.admin.merchantManage.service.MerchantService;
 import top.continew.admin.system.model.query.DeptQuery;
 import top.continew.admin.system.model.query.MenuQuery;
 import top.continew.admin.system.model.query.OptionQuery;
@@ -71,6 +73,7 @@ public class CommonController {
     private final DeptService deptService;
     private final MenuService menuService;
     private final RoleService roleService;
+    private  final MerchantService merchantService;
     private final DictItemService dictItemService;
     private final OptionService optionService;
 
@@ -99,6 +102,12 @@ public class CommonController {
     @GetMapping("/dict/role")
     public R<List<LabelValueResp>> listRoleDict(RoleQuery query, SortQuery sortQuery) {
         return R.ok(roleService.listDict(query, sortQuery));
+    }
+
+    @Operation(summary = "查询商户字典", description = "查询商户字典列表")
+    @GetMapping("/dict/merchant")
+    public R<List<LabelValueResp>> listMerchantDict(MerchantQuery query, SortQuery sortQuery) {
+        return R.ok(merchantService.listDict(query, sortQuery));
     }
 
     @Operation(summary = "查询字典", description = "查询字典列表")

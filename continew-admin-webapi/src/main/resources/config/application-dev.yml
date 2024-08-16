@@ -1,6 +1,6 @@
 --- ### 项目配置
 project:
-  # URL（跨域配置默认放行此 URL，第三方登录回调默认使用此 URL 为前缀，请注意更改为你实际的前端 URL）
+  # URL
   url: http://localhost:5173
 
 --- ### 服务器配置
@@ -22,19 +22,19 @@ spring.datasource:
     datasource:
       # 主库配置（可配多个，构成多主）
       master:
-        url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:continew_admin}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true&autoReconnect=true&maxReconnects=10&failOverReadOnly=false
+        url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:pay_admin}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true&autoReconnect=true&maxReconnects=10&failOverReadOnly=false
         username: ${DB_USER:root}
-        password: ${DB_PWD:123456}
+        password: ${DB_PWD:zhangsan123}
         driver-class-name: com.mysql.cj.jdbc.Driver
         type: ${spring.datasource.type}
-#      # 从库配置（可配多个，构成多从）
-#      slave_1:
-#        url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:continew_admin}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true&autoReconnect=true&maxReconnects=10&failOverReadOnly=false
-#        username:
-#        password:
-#        lazy: true
-#        driver-class-name: com.mysql.cj.jdbc.Driver
-#        type: ${spring.datasource.type}
+      # 从库配置（可配多个，构成多从）
+      slave_1:
+        url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:pay_admin}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true&autoReconnect=true&maxReconnects=10&failOverReadOnly=false
+        username:
+        password:
+        lazy: true
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: ${spring.datasource.type}
 #      # PostgreSQL 库配置
 #      postgresql:
 #        url: jdbc:postgresql://${DB_HOST:127.0.0.1}:${DB_PORT:5432}/${DB_NAME:continew_admin}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true&autoReconnect=true&maxReconnects=10&failOverReadOnly=false
@@ -67,13 +67,13 @@ spring.data:
   ## Redis 配置（单机模式）
   redis:
     # 地址
-    host: ${REDIS_HOST:127.0.0.1}
+    host: ${REDIS_HOST:r-bp1hplcy2w05rbv5napd.redis.rds.aliyuncs.com}
     # 端口（默认 6379）
     port: ${REDIS_PORT:6379}
-    # 密码（未设置密码时请注释掉）
-    password: ${REDIS_PWD:123456}
+    # 密码（未设置密码时可为空或注释掉）
+    password: ${REDIS_PWD:Zhangsan123!!!}
     # 数据库索引
-    database: ${REDIS_DB:0}
+    database: ${REDIS_DB:5}
     # 连接超时时间
     timeout: 10s
     # 是否开启 SSL
@@ -120,13 +120,7 @@ continew-starter.captcha:
   behavior:
     enabled: true
     cache-type: REDIS
-    water-mark:
-    # 一分钟内接口请求次数限制开关（默认：0，关闭，开启后下方失败锁定配置才会生效）
-    req-frequency-limit-enable: 0
-    # 一分钟内验证码最多失败次数限制（默认：5次）
-    req-get-lock-limit: 5
-    # 一分钟内验证码最多失败次数限制达标后锁定时间（默认：300秒）
-    req-get-lock-seconds: 300
+    water-mark: ${project.app-name}
   ## 图形验证码
   graphic:
     # 类型
@@ -163,7 +157,7 @@ continew-starter.log:
 ## 项目日志配置（配置重叠部分，优先级高于 logback-spring.xml 中的配置）
 logging:
   level:
-    top.continew: DEBUG
+    top.charles7c: DEBUG
   file:
     path: ./logs
 
@@ -183,13 +177,6 @@ continew-starter.web.cors:
 springdoc:
   swagger-ui:
     enabled: true
-
---- ### WebSocket 配置
-continew-starter.messaging.websocket:
-  enabled: true
-  path: /websocket
-  # 配置允许跨域的域名
-  allowed-origins: '*'
 
 --- ### 短信配置
 sms:
@@ -246,7 +233,7 @@ sa-token.extension:
     - /*/*.html
     - /*/*.css
     - /*/*.js
-    - /websocket/**
+    - /webSocket/*
     # 接口文档相关资源
     - /favicon.ico
     - /doc.html

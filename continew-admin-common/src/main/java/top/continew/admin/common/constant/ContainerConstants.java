@@ -32,6 +32,11 @@ public class ContainerConstants extends ContainerPool {
     public static final String USER_NICKNAME = ContainerPool.USER_NICKNAME;
 
     /**
+     * 用户名
+     */
+    public static final String USER_NAME = "Username";
+
+    /**
      * 用户角色 ID 列表
      */
     public static final String USER_ROLE_ID_LIST = "UserRoleIdList";
