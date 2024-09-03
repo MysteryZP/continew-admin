@@ -26,11 +26,13 @@ public interface PayOrderService extends BaseService<PayOrderResp, PayOrderDetai
      */
     List<PayOrderDO> getOrderByMchOrderNoAndMerchantNo(String merchantNo, String merchantOrderNo);
 
-    boolean updateInit2Ing(Long id, PayOrderDO payOrder);
+    boolean updateInit2Ing(String id, PayOrderDO payOrder);
 
-    public boolean updateIng2Success(Long id, String channelOrderNo, String channelUserId);
+    public boolean updateIng2Success(String id, String channelOrderNo, String channelUserId);
 
-    public boolean updateIng2Fail(Long id, String channelOrderNo, String channelUserId, String channelErrCode, String channelErrMsg);
+    public boolean updateIng2Fail(String id, String channelOrderNo, String channelUserId, String channelErrCode, String channelErrMsg);
 
-    boolean updateIng2SuccessOrFail(Long id, Integer status, String channelOrderId, String channelUserId, String channelErrCode, String channelErrMsg);
+    boolean updateIng2SuccessOrFail(String id, Integer status, String channelOrderId, String channelUserId, String channelErrCode, String channelErrMsg);
+
+    PayOrderDO getByOrderNo(String payOrderNo);
 }

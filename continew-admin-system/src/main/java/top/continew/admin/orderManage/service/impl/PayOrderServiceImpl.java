@@ -1,10 +1,13 @@
 package top.continew.admin.orderManage.service.impl;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import top.continew.admin.common.config.mybatis.MyBatisPlusMetaObjectHandler;
 import top.continew.admin.common.enums.OrderStatusEnum;
 import top.continew.starter.extension.crud.service.impl.BaseServiceImpl;
 import top.continew.admin.orderManage.mapper.PayOrderMapper;
@@ -33,51 +36,71 @@ public class PayOrderServiceImpl extends BaseServiceImpl<PayOrderMapper, PayOrde
     }
 
     @Override
-    public boolean updateInit2Ing(Long id, PayOrderDO payOrder) {
+    public boolean updateInit2Ing(String payOrderNo, PayOrderDO payOrder) {
+        try {
+            MyBatisPlusMetaObjectHandler.setSkipUpdateFill(true);
+            PayOrderDO updateRecord = new PayOrderDO();
+            updateRecord.setStatus(OrderStatusEnum.ING.getValue());
 
-        PayOrderDO updateRecord = new PayOrderDO();
-        updateRecord.setStatus(OrderStatusEnum.ING.getValue());
+            //同时更新， 未确定 --》 已确定的其他信息。  如支付接口的确认、 费率的计算。
+            updateRecord.setPayCode(payOrder.getPayCode());
+            updateRecord.setPayMethodCode(payOrder.getPayMethodCode());
+            updateRecord.setMchFeeRate(payOrder.getMchFeeRate());
+            updateRecord.setMchFeeAmount(payOrder.getMchFeeAmount());
+            return baseMapper.update(updateRecord, new LambdaUpdateWrapper<PayOrderDO>()
+                    .eq(PayOrderDO::getPayOrderNo, payOrderNo).eq(PayOrderDO::getStatus,OrderStatusEnum.INIT.getValue())) > 0;
+        }finally {
+            MyBatisPlusMetaObjectHandler.clearSkipUpdateFill();
+        }
 
-        //同时更新， 未确定 --》 已确定的其他信息。  如支付接口的确认、 费率的计算。
-        updateRecord.setPayCode(payOrder.getPayCode());
-        updateRecord.setPayMethodCode(payOrder.getPayMethodCode());
-        updateRecord.setMchFeeRate(payOrder.getMchFeeRate());
-        updateRecord.setMchFeeAmount(payOrder.getMchFeeAmount());
-        return baseMapper.update(updateRecord, new LambdaUpdateWrapper<PayOrderDO>()
-                .eq(PayOrderDO::getId, id).eq(PayOrderDO::getStatus,OrderStatusEnum.INIT.getValue())) > 0;
     }
 
     @Override
-    public boolean updateIng2Success(Long id, String channelOrderNo, String channelUserId) {
-        PayOrderDO updateRecord = new PayOrderDO();
-        updateRecord.setStatus(OrderStatusEnum.SUCCESS.getValue());
-        //todo:需要补充支付成功时间字段
+    public boolean updateIng2Success(String payOrderNo, String channelOrderNo, String channelUserId) {
+        try{
+            MyBatisPlusMetaObjectHandler.setSkipUpdateFill(true);
+            PayOrderDO updateRecord = new PayOrderDO();
+            updateRecord.setStatus(OrderStatusEnum.SUCCESS.getValue());
+            //todo:需要补充支付成功时间字段
 //        updateRecord.setSuccessTime(new Date());
 
-        return baseMapper.update(updateRecord, new LambdaUpdateWrapper<PayOrderDO>()
-                .eq(PayOrderDO::getId, id).eq(PayOrderDO::getStatus, OrderStatusEnum.ING.getValue()))>0;
+            return baseMapper.update(updateRecord, new LambdaUpdateWrapper<PayOrderDO>()
+                    .eq(PayOrderDO::getPayOrderNo, payOrderNo).eq(PayOrderDO::getStatus, OrderStatusEnum.ING.getValue()))>0;
+        }finally {
+            MyBatisPlusMetaObjectHandler.clearSkipUpdateFill();
+        }
+
     }
 
     @Override
-    public boolean updateIng2Fail(Long id, String channelOrderNo, String channelUserId, String channelErrCode, String channelErrMsg) {
-        PayOrderDO updateRecord = new PayOrderDO();
-        updateRecord.setStatus(OrderStatusEnum.FAIL.getValue());
+    public boolean updateIng2Fail(String payOrderNo, String channelOrderNo, String channelUserId, String channelErrCode, String channelErrMsg) {
+        try{
+            MyBatisPlusMetaObjectHandler.setSkipUpdateFill(true);
+            PayOrderDO updateRecord = new PayOrderDO();
+            updateRecord.setStatus(OrderStatusEnum.FAIL.getValue());
+            //todo:需要补充支付失败信息，代码和渠道信息
+            return update(updateRecord, new LambdaUpdateWrapper<PayOrderDO>()
+                    .eq(PayOrderDO::getPayOrderNo, payOrderNo).eq(PayOrderDO::getStatus, OrderStatusEnum.ING.getValue()));
+        }finally {
+            MyBatisPlusMetaObjectHandler.clearSkipUpdateFill();
+        }
 
-        //todo:需要补充支付失败信息，代码和渠道信息
-
-        return update(updateRecord, new LambdaUpdateWrapper<PayOrderDO>()
-                .eq(PayOrderDO::getId, id).eq(PayOrderDO::getStatus, OrderStatusEnum.ING.getValue()));
     }
 
     @Override
-    public boolean updateIng2SuccessOrFail(Long id, Integer status, String channelOrderId, String channelUserId, String channelErrCode, String channelErrMsg) {
+    public boolean updateIng2SuccessOrFail(String payOrderNo, Integer status, String channelOrderId, String channelUserId, String channelErrCode, String channelErrMsg) {
         if(status == OrderStatusEnum.ING.getValue()){
             return true;
         }else if(status == OrderStatusEnum.SUCCESS.getValue()){
-            return updateIng2Success(id, channelOrderId, channelUserId);
+            return updateIng2Success(payOrderNo, channelOrderId, channelUserId);
         }else if(status == OrderStatusEnum.FAIL.getValue()){
-            return updateIng2Fail(id, channelOrderId, channelUserId, channelErrCode, channelErrMsg);
+            return updateIng2Fail(payOrderNo, channelOrderId, channelUserId, channelErrCode, channelErrMsg);
         }
         return false;
+    }
+
+    @Override
+    public PayOrderDO getByOrderNo(String payOrderNo) {
+        return baseMapper.getOrdersByOrderNo(payOrderNo);
     }
 }

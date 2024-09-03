@@ -51,6 +51,16 @@ public class MyBatisPlusMetaObjectHandler implements MetaObjectHandler {
      */
     private static final String UPDATE_TIME = "updateTime";
 
+    private static final ThreadLocal<Boolean> SKIP_UPDATE_FILL = new ThreadLocal<>();
+
+    public static void setSkipUpdateFill(boolean skip) {
+        SKIP_UPDATE_FILL.set(skip);
+    }
+
+    public static void clearSkipUpdateFill() {
+        SKIP_UPDATE_FILL.remove();
+    }
+
     /**
      * 插入数据时填充
      *
@@ -86,6 +96,10 @@ public class MyBatisPlusMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         try {
+            //是否跳过自动填充
+            if (Boolean.TRUE.equals(SKIP_UPDATE_FILL.get())) {
+                return; // 跳过填充
+            }
             if (null == metaObject) {
                 return;
             }

@@ -8,7 +8,7 @@ package top.continew.admin.common.constant;
 public class PayConstants {
 
     //接口类型
-    public interface IF_CODE{
+    public interface PAY_CODE{
 
         String DEFAULT = "default";   // 支付宝官方支付
         String ALIPAY = "alipay";   // 支付宝官方支付
@@ -45,7 +45,7 @@ public class PayConstants {
     public interface PAY_WAY_CODE{
 
         // 特殊支付方式
-        String QR_CASHIER = "QR_CASHIER"; //  ( 通过二维码跳转到收银台完成支付， 已集成获取用户ID的实现。  )
+        String QR_CASHIER = "QR_CASHIER";
         String AUTO_BAR = "AUTO_BAR"; // 条码聚合支付（自动分类条码类型）
 
         String ALI_BAR = "ALI_BAR";  //支付宝条码支付

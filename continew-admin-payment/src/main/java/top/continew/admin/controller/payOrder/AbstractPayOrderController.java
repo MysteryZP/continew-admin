@@ -2,7 +2,6 @@ package top.continew.admin.controller.payOrder;
 
 import cn.hutool.core.bean.BeanUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,8 +36,6 @@ import top.continew.starter.core.util.validate.CheckUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Optional;
 
 /**
  * @author Zhang SAM
@@ -113,12 +110,10 @@ public class AbstractPayOrderController {
         isNewOrder && orderService.getOrderByMchOrderNoAndMerchantNo(mchNo, unifiedOrderReq.getMchOrderNo()).size() > 0,
         "商户订单["+unifiedOrderReq.getMchOrderNo()+"]已存在"
             );
-
             CheckUtils.throwIf(
         StringUtils.isNotEmpty(unifiedOrderReq.getNotifyUrl()) && !StringKits.isAvailableUrl(unifiedOrderReq.getNotifyUrl()),
         "异步通知地址协议仅支持http:// 或 https:// !"
             );
-
             CheckUtils.throwIf(
         StringUtils.isNotEmpty(unifiedOrderReq.getReturnUrl()) && !StringKits.isAvailableUrl(unifiedOrderReq.getReturnUrl()),
         "同步通知地址协议仅支持http:// 或 https:// !"
@@ -181,6 +176,7 @@ public class AbstractPayOrderController {
                 PayOrderReq orderReq = BeanUtil.copyProperties(payOrder,PayOrderReq.class);
                 orderReq.setCreateUser(1l);//默认系统
                 orderReq.setCreateTime(LocalDateTime.now());//默认系统
+                orderReq.setIsvNo("SYS0001");
                 orderService.add(orderReq);
             }
 
@@ -198,7 +194,6 @@ public class AbstractPayOrderController {
 
     private PayOrderDO genPayOrder(UnifiedOrderReq req, MerchantDO mchInfo, ApplicationDO mchApp, String payCode, MerchantPayMethodDO mchPayPassage){
         PayOrderDO payOrder = BeanUtil.copyProperties(req,PayOrderDO.class);
-        payOrder.setMchOrderNo(mchInfo.getMchNo());//商户号
         //todo: 1.选择服务商，然后提供服务商号填写至订单信息当中
         //      2.payOrder.setIsvNo(mchInfo.getIsvNo()); //服务商号
 
@@ -306,11 +301,11 @@ public class AbstractPayOrderController {
         payOrder.setStatus(orderState);
         //todo:后期需要补充渠道错误信息和错误码，参考jeepay同类同方法
 
-        boolean isSuccess = orderService.updateInit2Ing(payOrder.getId(), payOrder);
+        boolean isSuccess = orderService.updateInit2Ing(payOrder.getPayOrderNo(), payOrder);
 
         CheckUtils.throwIf(!isSuccess,"更新订单异常");
 
-        isSuccess = orderService.updateIng2SuccessOrFail(payOrder.getId(), payOrder.getStatus(),
+        isSuccess = orderService.updateIng2SuccessOrFail(payOrder.getPayOrderNo(), payOrder.getStatus(),
                 channelRetMsg.getChannelOrderId(), channelRetMsg.getChannelUserId(), channelRetMsg.getChannelErrCode(), channelRetMsg.getChannelErrMsg());
 
         CheckUtils.throwIf(!isSuccess,"更新订单异常");

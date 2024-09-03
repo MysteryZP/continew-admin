@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
@@ -83,10 +84,18 @@ public class UnifiedOrderReq extends AbstractMchAppReq {
     /** 异步通知地址 **/
     @Schema(description = "异步通知地址", example = "https://www.xxx.xxx/api/x/x")
     @NotBlank(message="异步通知地址不能为空")
+    @Pattern(
+        regexp = "^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?$",
+        message = "异步通知地址协议仅支持http:// 或 https:// "
+    )
     private String notifyUrl;
 
     /** 跳转通知地址 **/
     @Schema(description = "跳转通知地址", example = "https://www.xxx.xxx/api/x/x")
+    @Pattern(
+        regexp = "^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?$",
+        message = "跳转通知地址协议仅支持http:// 或 https:// "
+    )
     private String returnUrl;
 
     /** 订单失效时间, 单位：秒 **/

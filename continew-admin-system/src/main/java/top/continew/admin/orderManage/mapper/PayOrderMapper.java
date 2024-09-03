@@ -19,4 +19,8 @@ public interface PayOrderMapper extends BaseMapper<PayOrderDO> {
             "WHERE o.mch_order_no = #{mchOrderNo}" +
             "AND o.mch_no = #{mchNo}")
     List<PayOrderDO> getOrdersByMerchantNoAndMerchantOrderNo(@Param("mchOrderNo") String mchOrderNo, @Param("mchNo") String mchNo);
+
+    @Select("SELECT * FROM sys_pay_order " +
+            "WHERE pay_order_no = #{payOrderNo}")
+    PayOrderDO getOrdersByOrderNo(@Param("payOrderNo") String payOrderNo);
 }

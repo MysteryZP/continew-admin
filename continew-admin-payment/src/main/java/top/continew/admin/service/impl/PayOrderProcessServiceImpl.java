@@ -37,7 +37,7 @@ import top.continew.admin.service.PayOrderProcessService;
 public class PayOrderProcessServiceImpl implements PayOrderProcessService {
 
 
-    private PayOrderService orderService;
+    private final PayOrderService orderService;
 
     /** 明确成功的处理逻辑（除更新订单其他业务） **/
     public void confirmSuccess(PayOrderDO payOrder){

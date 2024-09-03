@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -19,6 +20,9 @@ public class StringKits {
     // 机器标识符，可以是IP后缀或机器ID
     private static final String machineId = "001"; // 示例中的机器ID，可以根据具体情况替换
 
+    private static final Random random = new Random();
+    private static final int MAX_COUNTER = 5; // 计数器最大值
+
 
     /** 是否 http 或 https连接 **/
     public static boolean isAvailableUrl(String url){
@@ -30,25 +34,13 @@ public class StringKits {
         return url.startsWith("http://") ||url.startsWith("https://");
     }
 
-    //
-    /** 生成唯一订单号的方法 **/
     public static String generateOrderNumber() {
-        // 获取当前时间戳
-        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        String timestamp = sdf.format(new Date());
 
-        // 获取并发下的唯一序列号
-        int currentSequence = sequence.getAndIncrement();
+        int randomNum = random.nextInt(1000000); // 生成3位随机数
 
-        // 如果序列号达到最大值，重置为0
-        if (currentSequence > 9999) {
-            sequence.set(0);
-            currentSequence = sequence.getAndIncrement();
-        }
-
-        // 将序列号格式化为四位数，不足四位前面补0
-        String sequenceStr = String.format("%04d", currentSequence);
-
-        // 组合订单号：时间戳 + 机器标识符 + 四位序列号
-        return timeStamp + machineId + sequenceStr;
+        // 组合时间戳、随机数和计数器，确保订单号长度为18位
+        return String.format("%s%03d", timestamp, randomNum);
     }
 }

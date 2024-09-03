@@ -67,10 +67,27 @@ public class CacheConstants {
     public static final String DASHBOARD_KEY_PREFIX = "DASHBOARD" + DELIMITER;
 
     /**
+     * 支付订单处理缓存锁前缀
+     */
+    public static final String ORDER_PROCESS_LOCK = "ORDER_PROCESS_LOCK_%s";
+
+
+    /**
      * 用户密码错误次数缓存键前缀
      */
     public static final String USER_PASSWORD_ERROR_KEY_PREFIX = USER_KEY_PREFIX + "PASSWORD_ERROR" + DELIMITER;
 
+    /** 默认锁的过期时间为 30 秒 **/
+    public static final long DEFAULT_BALANCE_LOCK_EXPIRE_TIME = 30;
+    /** 默认重试间隔为 100 毫秒 **/
+    public static final long DEFAULT_BALANCE_LOCK_INTERVAL = 100;
+    /** 默认最大重试次数为 10 **/
+    public static final int DEFAULT_BALANCE_LOCK_MAX_RETRIES = 10;
+
     private CacheConstants() {
+    }
+
+    public static String getCacheKeyOrderProcessLock(String payOrderNo){
+        return String.format(ORDER_PROCESS_LOCK, payOrderNo);
     }
 }
